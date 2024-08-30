@@ -1,0 +1,73 @@
+# create one iris with both apache2 and nginx webgateway
+
+services:
+    iris-a:      
+        image: containers.intersystems.com/intersystems/irishealth-arm64:2024.1
+        container_name: iris-a
+        hostname: irisa
+        ports:
+            - 1972:1972
+            - 9001-9005:9001-9005 # test ports
+        volumes:
+            - ./iris2024:/external
+        command: 
+            --key /external/i4h_Enterprise_contianer_Ubuntu_ARM64.ISCkey
+        #    --after /external/code_install.sh
+        #    --instance irisa
+        environment: 
+            - TZ=CST-8
+            - ISC_CPF_MERGE_FILE=/external/merge.cpf
+        #    - ISC_DATA_DIRECTORY=/dur/iconfig
+       
+    # webgateway-nginx:
+    #     image: containers.intersystems.com/intersystems/webgateway-nginx-arm64:2024.1
+    #     container_name: wg-n
+    #     hostname: wg-n
+    #     ports:
+    #         - "8081:80"
+    #         - "444:443"
+    #     volumes:
+    #         - ./webgateway-nginx:/external
+    #     environment:
+    #         - TZ=CST-8
+    #         - ISC_CSP_CONF_FILE=/external/CSP-nginx.conf
+    #         - ISC_CSP_INI_FILE=/external/CSP.ini
+    # #         # 下面这些env肯定不行 
+    # #         # - IRIS_HOST=iris-a
+    # #         # - IRIS_PORT=1972
+    # #         # - "SYSTEM_MANAGER=*.*.*.*" 
+    
+    webgateway-apache:
+        image: containers.intersystems.com/intersystems/webgateway-arm64:2024.1
+        container_name: wg-a
+        hostname: wg-a
+        ports:
+            - "8080:80"
+            - "443:443"
+        volumes:
+            - ./webgateway-apache:/external
+        environment:
+            - TZ=CST-8
+            # - IRIS_HOST=iris-a
+            # - IRIS_PORT=1972
+            - ISC_CSP_CONF_FILE=/external/CSP.conf
+            - ISC_CSP_INI_FILE=/external/CSP.ini
+            # - "SYSTEM_MANAGER=*.*.*.*"       
+    
+    
+    
+    # webgateway:
+    #     image: containers.intersystems.com/intersystems/webgateway-arm64:2024.1
+    #     init: true
+    #     container_name: webgateway
+    #     hostname: webgateway
+    #     ports:
+    #     - "8882:80"
+    #     - "8883:443"
+    #     environment:
+    #     - ISC_DATA_DIRECTORY=/webgateway-shared/durable
+    #     - ISC_CSP_CONF_FILE=/webgateway-shared/CSP.conf
+    #     - ISC_CSP_INI_FILE=/webgateway-shared/CSP.ini
+    #     volumes:
+    #         -  ./webgateway:/webgateway-shared
+    #     #privileged: true

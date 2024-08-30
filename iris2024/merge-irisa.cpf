@@ -1,0 +1,17 @@
+# 使用volume创建iris container时，用户创建的数据库不能放在/usr/irissys/mgr下面
+# 默认的位置时durable %sys的配置位置，这里是/dur/iconfig/mgr
+
+[config]
+bbsiz=-1
+globals=0,0,1024,0,0,0
+routines=512
+gmheap=256000
+
+[Startup]
+PasswordHash=fce110ae1f79b9d7e20367a3352efeb48ef22cc8810c4598791f3fb752eabcfe7b2d9ce75099e626b03a62fc6a146f1ca772789ebbcea276674c558c63af4f7b,9ffbbc8ef25086e4d4da87e20c6ea43e8ebb6d1ab64815aef3b1f7e8964dbd87efe68c8464a6b40865efc7d0d568c601e2a49917326dfd78197b68f1bde59db2,10000,SHA512
+SystemMode=TEST
+
+[Actions]
+CreateResource:Name=%DB_DEMO,Description="The DEMO database"
+CreateDatabase:Name=DEMO,Directory=/usr/irissys/mgr/demo,Resource=%DB_DEMO,
+CreateNamespace:Name=DEMO,Globals=DEMO,Interop=1

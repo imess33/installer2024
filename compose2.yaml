@@ -1,0 +1,65 @@
+# demo how one nginx webgateway connect two iris instances. 
+
+services:
+    iris-a:      
+        image: containers.intersystems.com/intersystems/irishealth-arm64:2024.1
+        container_name: iris-a
+        hostname: irisa
+        ports:
+            - 1972:1972
+            - 52773:52773
+            - 9001-9005:9001-9005 # test ports
+        volumes:
+            - ./iris2024:/external
+        command: 
+            --key /external/i4h_Enterprise_contianer_Ubuntu_ARM64.ISCkey
+            # --after /external/code_install.sh
+            # --instance irisa
+        environment: 
+            - TZ=CST-8
+            - ISC_CPF_MERGE_FILE=/external/merge-irisa.cpf
+        #    - ISC_DATA_DIRECTORY=/dur/iconfig
+    iris-b:      
+        image: containers.intersystems.com/intersystems/irishealth-arm64:2024.1
+        container_name: iris-b
+        hostname: irisb
+        ports:
+            - 1973:1972
+            - 52774:52773
+            - 9011-9015:9001-9005 # test ports
+        volumes:
+            - ./iris2024:/external
+        command: 
+            --key /external/i4h_Enterprise_contianer_Ubuntu_ARM64.ISCkey         
+            # --after /external/code_install.sh
+            # --instance irisb
+        environment: 
+            - TZ=CST-8
+            - ISC_CPF_MERGE_FILE=/external/merge-irisb.cpf
+        #    - ISC_DATA_DIRECTORY=/dur/iconfig   
+    webgateway-nginx-1:
+        image: containers.intersystems.com/intersystems/webgateway-nginx-arm64:2024.1
+        container_name: wgn-1
+        hostname: wgn-1
+        ports:
+            - "8081:80"
+            - "4413:443"
+        volumes:
+            - ./webgateway-nginx:/external
+        environment:
+            - TZ=CST-8
+            - ISC_CSP_CONF_FILE=/external/CSP-nginx.conf
+            - ISC_CSP_INI_FILE=/external/CSP.ini
+    webgateway-nginx-2:
+        image: containers.intersystems.com/intersystems/webgateway-nginx-arm64:2024.1
+        container_name: wgn-2
+        hostname: wgn-2
+        ports:
+            - "8082:80"
+            - "4423:443"
+        volumes:
+            - ./webgateway-nginx:/external
+        environment:
+            - TZ=CST-8
+            - ISC_CSP_CONF_FILE=/external/CSP-nginx.conf
+            - ISC_CSP_INI_FILE=/external/CSP.ini      
