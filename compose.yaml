@@ -19,55 +19,37 @@ services:
             - ISC_CPF_MERGE_FILE=/external/merge.cpf
         #    - ISC_DATA_DIRECTORY=/dur/iconfig
        
-    # webgateway-nginx:
-    #     image: containers.intersystems.com/intersystems/webgateway-nginx-arm64:2024.1
-    #     container_name: wg-n
-    #     hostname: wg-n
-    #     ports:
-    #         - "8081:80"
-    #         - "444:443"
-    #     volumes:
-    #         - ./webgateway-nginx:/external
-    #     environment:
-    #         - TZ=CST-8
-    #         - ISC_CSP_CONF_FILE=/external/CSP-nginx.conf
-    #         - ISC_CSP_INI_FILE=/external/CSP.ini
-    # #         # 下面这些env肯定不行 
-    # #         # - IRIS_HOST=iris-a
-    # #         # - IRIS_PORT=1972
-    # #         # - "SYSTEM_MANAGER=*.*.*.*" 
-    
-    webgateway-apache:
-        image: containers.intersystems.com/intersystems/webgateway-arm64:2024.1
-        container_name: wg-a
-        hostname: wg-a
+    webgateway-nginx:
+        image: containers.intersystems.com/intersystems/webgateway-nginx-arm64:2024.1
+        container_name: wg-n
+        hostname: wg-n
         ports:
-            - "8080:80"
-            - "443:443"
+            - "8081:80"
+            - "444:443"
         volumes:
-            - ./webgateway-apache:/external
+            - ./webgateway:/external
         environment:
             - TZ=CST-8
-            # - IRIS_HOST=iris-a
-            # - IRIS_PORT=1972
-            - ISC_CSP_CONF_FILE=/external/CSP.conf
+            - ISC_CSP_CONF_FILE=/external/CSP-nginx.conf
             - ISC_CSP_INI_FILE=/external/CSP.ini
-            # - "SYSTEM_MANAGER=*.*.*.*"       
+            - ISC_DATA_DIRECTORY=/external/durable
+   
     
-    
-    
-    # webgateway:
+    # webgateway-apache:
     #     image: containers.intersystems.com/intersystems/webgateway-arm64:2024.1
-    #     init: true
-    #     container_name: webgateway
-    #     hostname: webgateway
+    #     container_name: wg-a
+    #     hostname: wg-a
     #     ports:
-    #     - "8882:80"
-    #     - "8883:443"
-    #     environment:
-    #     - ISC_DATA_DIRECTORY=/webgateway-shared/durable
-    #     - ISC_CSP_CONF_FILE=/webgateway-shared/CSP.conf
-    #     - ISC_CSP_INI_FILE=/webgateway-shared/CSP.ini
+    #         - "8080:80"
+    #         - "443:443"
     #     volumes:
-    #         -  ./webgateway:/webgateway-shared
-    #     #privileged: true
+    #         - ./webgateway:/external
+    #     environment:
+    #         - TZ=CST-8
+    #         - ISC_CSP_CONF_FILE=/external/CSP-apache.conf
+    #         - ISC_CSP_INI_FILE=/external/CSP.ini
+    #         - ISC_DATA_DIRECTORY=/external/durable
+    #         # 下面这些env肯定不行 
+    #         # - IRIS_HOST=iris-a
+    #         # - IRIS_PORT=1972
+    #         # - "SYSTEM_MANAGER=*.*.*.*"        
